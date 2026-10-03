@@ -126,13 +126,13 @@ api.interceptors.response.use(
 
 
         // ignore refresh endpoint
-        if(
-            originalRequest.url.includes("/auth/refresh")
-        ){
-
-            return Promise.reject(error);
-
-        }
+        if (
+    originalRequest.url.includes("/auth/login") ||
+    originalRequest.url.includes("/auth/refresh") ||
+    originalRequest.url.includes("/auth/register")
+) {
+    return Promise.reject(error);
+}
 
 
 
