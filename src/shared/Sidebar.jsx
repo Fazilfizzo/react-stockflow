@@ -219,7 +219,7 @@ const Sidebar = ({ open, setOpen }) => {
                                     >
 
 
-                                        <span className="ml-2 text-lg">
+                                        <span className="sm:ml-2 md:ml-2 text-lg">
                                             {item.icon}
                                         </span>
 

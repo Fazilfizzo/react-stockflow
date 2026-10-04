@@ -36,12 +36,18 @@ const OrderSummary = () => {
 
             setLoading(true);
 
+            console.log("Starting to checkout")
+
 
             const res = await api.post(
                 "/payment/checkout"
             );
 
+            console.log(res.status)
 
+            // console.log("Redirecting to stripe checkout")
+
+            
 
             toast.success(
                 "Redirecting to Stripe checkout"
