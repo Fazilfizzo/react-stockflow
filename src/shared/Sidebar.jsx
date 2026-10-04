@@ -154,8 +154,6 @@ const Sidebar = ({ open, setOpen }) => {
                         className="
                         flex
                         flex-col
-                        ml-2
-
                         gap-3
 
                         px-3
@@ -181,7 +179,7 @@ const Sidebar = ({ open, setOpen }) => {
 
                                         className={`
                                             group
-
+                                            ml-2
                                             relative
                                             flex
                                             items-center
