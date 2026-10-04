@@ -179,7 +179,6 @@ const Sidebar = ({ open, setOpen }) => {
 
                                         className={`
                                             group
-                                            ml-2
                                             relative
                                             flex
                                             items-center
@@ -220,7 +219,7 @@ const Sidebar = ({ open, setOpen }) => {
                                     >
 
 
-                                        <span className="text-lg">
+                                        <span className="ml-2 text-lg">
                                             {item.icon}
                                         </span>
 
