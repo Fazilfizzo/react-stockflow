@@ -5,6 +5,7 @@ import { Link, useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
 
 import { register } from "./authService";
+import PasswordInput from "./PasswordInput";
 
 
 
@@ -214,7 +215,7 @@ Password
 </label>
 
 
-<input
+{/* <input
 
 name="password"
 
@@ -237,7 +238,25 @@ focus:ring-2
 focus:ring-blue-500
 "
 
-/>
+/> */}
+
+                   <PasswordInput 
+                   value={form.password}
+                   onChange={handleChange}
+                   placeholder="Enter your password"
+                   className="
+                   mt-1
+                   w-full
+                   border
+                   rounded-lg
+                   px-4
+                   py-3
+                   outline-none
+                   focus:ring-2
+                 focus:ring-blue-500
+                    "
+                   required
+                   /> 
 
 
 </div>
