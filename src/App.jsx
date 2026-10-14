@@ -61,18 +61,6 @@ function App() {
 />
 
 
-<Route
-    path="/payment-success"
-    element={<PaymentSuccessPage />}
-/>
-
-
-<Route
-    path="/payment-cancel"
-    element={<PaymentCancelPage />}
-/>
-
-
 
 {/* Protected Application */}
 
@@ -138,6 +126,17 @@ function App() {
         />
 
     </Route>
+
+    <Route
+    path="/payment-success"
+    element={<PaymentSuccessPage />}
+/>
+
+
+<Route
+    path="/payment-cancel"
+    element={<PaymentCancelPage />}
+/>
 
 </Route>
 
