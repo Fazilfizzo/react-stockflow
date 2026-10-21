@@ -1,93 +1,45 @@
 import {
-    createContext,
-    useContext,
-    useEffect,
-    useState
+  createContext,
+  useContext,
+  useEffect,
+  useState,
 } from "react";
-
 
 const ThemeContext = createContext(null);
 
-
 export function ThemeProvider({ children }) {
+  const [theme, setTheme] = useState(() => {
+    if (typeof window === "undefined") return "light";
 
+    const savedTheme = localStorage.getItem("theme");
+    if (savedTheme === "light" || savedTheme === "dark") {
+      return savedTheme;
+    }
 
-    const [theme, setTheme] = useState(() => {
+    return window.matchMedia("(prefers-color-scheme: dark)").matches
+      ? "dark"
+      : "light";
+  });
 
-        return localStorage.getItem("theme") || "light";
+  useEffect(() => {
+    const root = document.documentElement;
+    root.classList.toggle("dark", theme === "dark");
+    root.style.colorScheme = theme;
+    localStorage.setItem("theme", theme);
+  }, [theme]);
 
-    });
+  const toggleTheme = () => {
+    setTheme((currentTheme) => (currentTheme === "dark" ? "light" : "dark"));
+  };
 
-
-
-    useEffect(() => {
-        console.log("Theme effect: ", theme)
-
-        const html = document.documentElement;
-
-        if(theme === "dark") {
-
-            html.classList.add("dark");
-
-        } else {
-
-            html.classList.remove("dark");
-
-        }
-
-
-        localStorage.setItem(
-            "theme",
-            theme
-        );
-
-
-    }, [theme]);
-
-
-
-
-
-    const toggleTheme = () => {
-        console.log("Button clicked.")
-
-        setTheme(currentTheme => {
-
-            const newTheme = currentTheme === "dark" ? "light" : "dark"
-            console.log("Current: ", currentTheme)
-            console.log("New: ", newTheme)
-
-            return newTheme;
-        });
-
-    };
-
-
-
-
-    return (
-
-        <ThemeContext.Provider
-            value={{
-                theme,
-                toggleTheme
-            }}
-        >
-
-            {children}
-
-        </ThemeContext.Provider>
-
-    );
-
+  return (
+    <ThemeContext.Provider value={{ theme, toggleTheme }}>
+      {children}
+    </ThemeContext.Provider>
+  );
 }
 
-
-
-
 // eslint-disable-next-line react-refresh/only-export-components
-export function useTheme(){
-
-    return useContext(ThemeContext);
-
+export function useTheme() {
+  return useContext(ThemeContext);
 }
