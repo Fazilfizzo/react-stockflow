@@ -33,8 +33,10 @@ const Sidebar = ({ open, setOpen }) => {
         className={`
           fixed top-0 left-0 z-50 h-screen
           w-64 md:w-20
-          bg-white dark:bg-gray-900
-          border-r border-slate-200 dark:border-gray-700
+          bg-white
+          dark:bg-gray-900
+          border-r border-slate-200
+          dark:border-gray-700
           transition-transform duration-300
           ${open ? "translate-x-0" : "-translate-x-full"}
           md:translate-x-0
@@ -43,7 +45,12 @@ const Sidebar = ({ open, setOpen }) => {
         <div className="flex h-full flex-col py-5">
           <button
             onClick={() => setOpen?.(false)}
-            className="md:hidden self-end mr-5 mb-5 p-2 rounded-lg text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-gray-800"
+            className="
+              md:hidden self-end mr-5 mb-5 p-2
+              rounded-lg text-slate-700
+              hover:bg-slate-100
+              dark:text-slate-300 dark:hover:bg-gray-800
+            "
             aria-label="Close sidebar"
           >
             <FaTimes />
@@ -59,7 +66,7 @@ const Sidebar = ({ open, setOpen }) => {
                   `group relative flex items-center gap-4 h-12 rounded-xl transition-colors md:justify-center ${
                     isActive
                       ? "bg-blue-600 text-white shadow-sm"
-                      : "text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-gray-800"
+                      : "text-slate-600 hover:bg-slate-100 dark:text-slate-300 dark:hover:bg-gray-800"
                   }`
                 }
               >
@@ -69,11 +76,10 @@ const Sidebar = ({ open, setOpen }) => {
 
                 <span
                   className="
-                    hidden md:block
-                    absolute left-16
+                    hidden md:block absolute left-16
                     px-3 py-1 rounded-lg
-                    bg-gray-900 dark:bg-white
-                    text-white dark:text-gray-900
+                    bg-gray-900 text-white
+                    dark:bg-white dark:text-gray-900
                     text-xs whitespace-nowrap
                     opacity-0 group-hover:opacity-100
                     pointer-events-none
