@@ -1,3 +1,4 @@
+import { useEffect } from "react";
 import { NavLink } from "react-router-dom";
 import {
   FaHome,
@@ -9,6 +10,12 @@ import {
 import { MdInventory2 } from "react-icons/md";
 import useCartStore from "./store/cartStore";
 
+/**
+ * Breakpoints
+ *  < md  (phones)   : slide-in drawer, full labels, backdrop
+ *  md–lg (tablets)  : 80px icon rail, tooltips on hover/focus
+ *  lg+   (desktops) : 256px expanded sidebar with labels
+ */
 const Sidebar = ({ open, setOpen }) => {
   const totalItems = useCartStore((state) => state.totalItems ?? 0);
 
@@ -20,84 +27,144 @@ const Sidebar = ({ open, setOpen }) => {
     { name: "Stock Movement", path: "/stock-movements", icon: <FaExchangeAlt /> },
   ];
 
+  // Close the drawer with Escape
+  useEffect(() => {
+    if (!open) return;
+    const onKeyDown = (e) => e.key === "Escape" && setOpen?.(false);
+    window.addEventListener("keydown", onKeyDown);
+    return () => window.removeEventListener("keydown", onKeyDown);
+  }, [open, setOpen]);
+
+  // Lock page scroll while the mobile drawer is open
+  useEffect(() => {
+    if (!open) return;
+    const previous = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+    return () => {
+      document.body.style.overflow = previous;
+    };
+  }, [open]);
+
+  // Reset the drawer when the screen grows past the mobile breakpoint
+  useEffect(() => {
+    const mq = window.matchMedia("(min-width: 768px)");
+    const onChange = (e) => e.matches && setOpen?.(false);
+    mq.addEventListener("change", onChange);
+    return () => mq.removeEventListener("change", onChange);
+  }, [setOpen]);
+
   return (
     <>
-      {open && (
-        <div
-          onClick={() => setOpen?.(false)}
-          className="fixed inset-0 z-40 bg-black/50 md:hidden"
-        />
-      )}
+      {/* Backdrop (mobile only) */}
+      <div
+        onClick={() => setOpen?.(false)}
+        aria-hidden="true"
+        className={`
+          fixed inset-0 z-40 bg-black/60 backdrop-blur-[2px]
+          transition-opacity duration-300 md:hidden
+          ${open ? "opacity-100" : "pointer-events-none opacity-0"}
+        `}
+      />
 
       <aside
+        aria-label="Main navigation"
         className={`
-          fixed top-0 left-0 z-50 h-screen
-          w-64 md:w-20
-          bg-white
-          dark:bg-gray-900
-          border-r border-slate-200
-          dark:border-gray-700
-          transition-transform duration-300
-          ${open ? "translate-x-0" : "-translate-x-full"}
-          md:translate-x-0
+          fixed inset-y-0 left-0 z-50 h-dvh
+          w-[min(18rem,85vw)] md:w-20 lg:w-64
+          bg-white dark:bg-gray-900
+          border-r border-slate-200 dark:border-slate-700
+          shadow-2xl md:shadow-none
+          transition-[transform,visibility] duration-300 ease-out
+          md:translate-x-0 md:visible
+          ${open ? "translate-x-0" : "-translate-x-full invisible"}
         `}
       >
-        <div className="flex h-full flex-col py-5">
-          <button
-            onClick={() => setOpen?.(false)}
-            className="
-              md:hidden self-end mr-5 mb-5 p-2
-              rounded-lg text-slate-700
-              hover:bg-slate-100
-              dark:text-slate-300 dark:hover:bg-gray-800
-            "
-            aria-label="Close sidebar"
-          >
-            <FaTimes />
-          </button>
+        <div className="flex h-full flex-col pb-[env(safe-area-inset-bottom)]">
+          {/* Drawer header (mobile only) */}
+          <div className="flex h-16 shrink-0 items-center justify-between px-4 md:hidden">
+            <span className="text-lg font-bold text-slate-900 dark:text-white">
+              StockFlow
+            </span>
+            <button
+              onClick={() => setOpen?.(false)}
+              className="
+                flex h-10 w-10 items-center justify-center rounded-lg
+                text-slate-700 dark:text-slate-300
+                [@media(hover:hover)]:hover:bg-slate-100
+                dark:[@media(hover:hover)]:hover:bg-gray-800
+                focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500
+              "
+              aria-label="Close sidebar"
+            >
+              <FaTimes size={18} />
+            </button>
+          </div>
 
-          <nav className="flex flex-col gap-3 px-3">
+          {/* Navigation */}
+          <nav
+            className="
+              flex flex-1 flex-col gap-2 px-3 py-3 md:py-5
+              max-md:overflow-y-auto overscroll-contain
+            "
+          >
             {menuItems.map((item) => (
               <NavLink
                 key={item.name}
                 to={item.path}
                 onClick={() => setOpen?.(false)}
+                aria-label={item.name}
                 className={({ isActive }) =>
-                  `group relative flex items-center gap-4 h-12 rounded-xl transition-colors md:justify-center ${
+                  `
+                  group relative flex h-12 items-center gap-4 rounded-xl px-4
+                  md:justify-center md:px-0
+                  lg:justify-start lg:px-4
+                  transition-colors
+                  focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500
+                  ${
                     isActive
                       ? "bg-blue-600 text-white shadow-sm"
-                      : "text-slate-600 hover:bg-slate-100 dark:text-slate-300 dark:hover:bg-gray-800"
-                  }`
+                      : `text-slate-600 dark:text-slate-300
+                         [@media(hover:hover)]:hover:bg-slate-100
+                         dark:[@media(hover:hover)]:hover:bg-gray-800`
+                  }
+                `
                 }
               >
-                <span className="text-lg md:ml-0">{item.icon}</span>
+                <span className="flex h-6 w-6 shrink-0 items-center justify-center text-lg">
+                  {item.icon}
+                </span>
 
-                <span className="font-medium md:hidden">{item.name}</span>
+                {/* Label: drawer + desktop. Hidden on the tablet rail. */}
+                <span className="truncate font-medium md:hidden lg:inline">
+                  {item.name}
+                </span>
 
+                {/* Tooltip: tablet rail only */}
                 <span
+                  role="tooltip"
                   className="
-                    hidden md:block absolute left-16
-                    px-3 py-1 rounded-lg
-                    bg-gray-900 text-white
-                    dark:bg-white dark:text-gray-900
-                    text-xs whitespace-nowrap
-                    opacity-0 group-hover:opacity-100
-                    pointer-events-none
+                    pointer-events-none absolute left-full z-50 ml-3
+                    hidden md:block lg:hidden
+                    whitespace-nowrap rounded-lg px-3 py-1 text-xs
+                    bg-gray-900 text-white dark:bg-white dark:text-gray-900
+                    opacity-0 shadow-lg transition-opacity
+                    group-hover:opacity-100 group-focus-visible:opacity-100
                   "
                 >
                   {item.name}
                 </span>
 
+                {/* Badge: inline in drawer/desktop, corner dot on the rail */}
                 {item.badge > 0 && (
                   <span
                     className="
-                      absolute top-1 right-2 md:right-1
-                      w-5 h-5 rounded-full
-                      flex items-center justify-center
-                      bg-red-500 text-white text-xs
+                      ml-auto flex h-5 min-w-5 items-center justify-center
+                      rounded-full bg-red-500 px-1 text-xs font-semibold text-white
+                      md:absolute md:right-1 md:top-1 md:ml-0
+                      lg:static lg:ml-auto
                     "
                   >
-                    {item.badge}
+                    {item.badge > 99 ? "99+" : item.badge}
                   </span>
                 )}
               </NavLink>
