@@ -24,6 +24,9 @@ import OrderDetailsPage from './features/order/OrderDetailsPage';
 import StockMovementPage from './features/stock_movement/StockMovementPage';
 import CreateSupplier from './features/supplier/CreateSupplier';
 import CreateCategory from './features/category/CreateCategory';
+import ForgotPassword from './features/auth/ForgotPassword';
+import ResetPassword from './features/auth/ResetPassword';
+import { forgotPassword, resetPassword } from './features/auth/authService';
 
 function App() {
 
@@ -48,6 +51,15 @@ function App() {
         path="/register"
         element={<Register />}
     />
+
+    <Route
+  path="/forgot-password"
+  element={<ForgotPassword onSubmit={(email) => forgotPassword({ email })} />}
+/>
+<Route
+  path="/reset-password"
+  element={<ResetPassword onSubmit={resetPassword} />}
+/>
 
 </Route>
 

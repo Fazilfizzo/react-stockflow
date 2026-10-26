@@ -231,7 +231,20 @@ const Login = () => {
 
                 </div>
 
+                <div className="text-right">
 
+                    <Link
+                    to="/forgot-password"
+                    className="
+                    text-sm
+                    text-blue-600
+                    font-semibold
+                    "
+                    >
+                        Forgot Password?
+                    </Link>
+
+                 </div>
 
 
 
